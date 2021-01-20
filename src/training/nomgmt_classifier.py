@@ -55,16 +55,16 @@ param_grid = {'n_estimators': n_estimators,
 # 'bootstrap': True}
 ## RESULTS
 
-f = RandomForestClassifier(
-    # n_estimators=8484, 
-    # min_samples_split=5, 
-    # min_samples_leaf=2, 
-    # max_features=3, 
-    # max_depth=80, 
-    # bootstrap=True
+rf = RandomForestClassifier(
+    n_estimators=8484, 
+    min_samples_split=5, 
+    min_samples_leaf=2, 
+    max_features=3, 
+    max_depth=80, 
+    bootstrap=True
 )
 
-rf = RandomizedSearchCV(f, param_grid, n_jobs=3)
+# f = RandomizedSearchCV(f, param_grid, n_jobs=3)
 
 rf.fit(X_train, y_train)
 preds = rf.predict(X_test)
@@ -72,7 +72,7 @@ train_preds = rf.predict(X_train)
 
 model_report(preds, train_preds, y_test, y_train)
 
-print(rf.best_params_)
+# with open('model/nomgmt_classifier', 'wb') as handle:
+#     pickle.dump(rf, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-with open('model/nomgmt_classifier', 'wb') as handle:
-    pickle.dump(rf, handle, protocol=pickle.HIGHEST_PROTOCOL)
+print(rf.feature_importances_)
