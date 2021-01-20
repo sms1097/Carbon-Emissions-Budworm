@@ -4,11 +4,14 @@ import pickle
 from preprocess import load_data_class, model_report
 
 from sklearn.preprocessing import RobustScaler
-from sklearn.model_selection import train_test_split, RandomizedSearchCV
+from sklearn.model_selection import train_test_split, RandomizedSearchCV, GridSearchCV
  
-from sklearn.ensemble import  RandomForestClassifier, AdaBoostClassifier
+from sklearn.ensemble import  RandomForestClassifier, AdaBoostClassifier, BaggingClassifier
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import LinearSVC
 
+from imodels import SkopeRulesClassifier
 
 data = load_data_class('Heavy', 'DR5')
 dummies = pd.get_dummies(data['Treatment'])
@@ -45,35 +48,26 @@ param_grid = {'n_estimators': n_estimators,
                'bootstrap': bootstrap
 }
 
+# Accuracy: 0.777232746955345
+# Precision: 0.801490514905149
+# Recall: 0.7639651275427833
+# Train Accuracy: 0.8425393334461174
+# {'n_estimators': 1090, 
+# 'min_samples_split': 10, 
+# 'min_samples_leaf': 2, 
+# 'max_features': 3, 
+# 'max_depth': 90, 
+# 'bootstrap': True}
 
-## RESULTS
-# {'n_estimators': 6909, 'min_samples_split': 2, 'min_samples_leaf': 2, 'max_features': 3, 'max_depth': 70, 'bootstrap': True} 
-# training  99.2%
-# test 78.7%
+f = RandomForestClassifier()
 
-# rf = RandomForestClassifier(
-    # n_estimators=6909, 
-    # min_samples_split=2, 
-    # min_samples_leaf=2, 
-    # max_features=3, 
-    # max_depth=70, 
-    # bootstrap=True,
-    # n_jobs=-1
-# )
+rf = RandomizedSearchCV(f, param_grid, n_jobs=3)
 
-print(data['Voucher'].value_counts())
-
-search = AdaBoostClassifier(
-    base_estimator=base, 
-    n_estimators=1000
-)
-
-# search = RandomizedSearchCV(rf, param_grid, n_jobs=3)
-search.fit(X_train, y_train)
-preds = search.predict(X_test)
-train_preds = search.predict(X_train)
+rf.fit(X_train, y_train)
+preds = rf.predict(X_test)
+train_preds = rf.predict(X_train)
 
 model_report(preds, train_preds, y_test, y_train)
 
-# with open('../model/NoMgmt_classifier', 'wb') as handle:
-#     pickle.dump(rf, handle, protocol=pickle.HIGHEST_PROTOCOL)
+with open('model/heavy_classifier', 'wb') as handle:
+    pickle.dump(rf, handle, protocol=pickle.HIGHEST_PROTOCOL)

@@ -11,11 +11,11 @@ def base_load(management, discount):
     if discount not in rates:
         raise ValueError("Invalid Discount Rate!")
     
-    data = pd.read_csv("../Data/Classifier_Inputs.csv")
+    data = pd.read_csv("data/Classifier_Inputs.csv")
 
     salvage = data[
         (data['TimeStep'] == 40) & 
-        # (data['Treatment'] == management) & 
+        (data['Treatment'] == management) & 
         (data['Salvage'] == 'Salvage')
     ]
 
@@ -24,20 +24,19 @@ def base_load(management, discount):
 
     no_salvage = data[
         (data['TimeStep'] == 40) & 
-        # (data['Treatment'] == management) & 
+        (data['Treatment'] == management) & 
         (data['Salvage'] == 'NoSalvage')
     ]
 
     no_salvage = no_salvage.set_index("StandID")
     no_salvage = no_salvage.fillna(no_salvage.mean())
 
-    data = no_salvage.copy()
-    data[discount] -= salvage[discount]
-
+    data = salvage.copy()
+    data[discount] -= no_salvage[discount]
 
     return data
 
-def load_data_class(management, discount="DR3"):
+def load_data_class(management, discount="DR5"):
     rates = ["NoDR", "DR1", "DR3", "DR5"]
 
     data = base_load(management, discount)
@@ -47,7 +46,7 @@ def load_data_class(management, discount="DR3"):
 
     return data
 
-def load_data_reg(management, discount="DR3"):
+def load_data_reg(management, discount="DR5"):
     data = base_load(management, discount)
 
     rates = ["NoDR", "DR1", "DR3", "DR5"]
