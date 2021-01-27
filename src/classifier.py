@@ -6,13 +6,15 @@ from sklearn.preprocessing import RobustScaler
 
 
 class Classifier():
-    def __init__(self):
-        self.comm_ind = pickle.load(open('model/comm_ind_classifier', 'rb'))
-        self.heavy = pickle.load(open('model/heavy_classifier', 'rb'))
-        self.high_grade = pickle.load(open('model/heavy_classifier', 'rb'))
-        self.light = pickle.load(open('model/light_classifier', 'rb'))
-        self.moderate = pickle.load(open('model/moderate_classifier', 'rb'))
-        self.no_mgmt = pickle.load(open('model/nomgmt_classifier', 'rb'))
+    def __init__(self, discount_rate):
+        base = 'model/' + discount_rate + '/'
+        self.comm_ind = pickle.load(open(base + 'comm_ind_classifier', 'rb'))
+        self.heavy = pickle.load(open(base + 'heavy_classifier', 'rb'))
+        self.high_grade = pickle.load(open(base + 'heavy_classifier', 'rb'))
+        self.light = pickle.load(open(base + 'light_classifier', 'rb'))
+        self.moderate = pickle.load(open(base + 'moderate_classifier', 'rb'))
+        self.no_mgmt = pickle.load(open(base + 'nomgmt_classifier', 'rb'))
+        self.discount = discount_rate
 
 
         
@@ -25,7 +27,8 @@ class Classifier():
             (salvage['Salvage'] == 'NoSalvage') &
             (salvage['TimeStep'] == 40) &
             (salvage['Treatment'] == management)
-        ].DR5.sum()
+        ]
+        salvage_strategy = salvage_strategy[self.discount]
         
         no_salvage = pd.merge(data, strategy, on="StandID")
         no_salvage_strategy = no_salvage[
@@ -33,9 +36,18 @@ class Classifier():
             (no_salvage['Salvage'] == 'Salvage') &
             (no_salvage['TimeStep'] == 40) &
             (no_salvage['Treatment'] == management)
-        ].DR5.sum()
+        ]
+        no_salvage_strategy = no_salvage_strategy[self.discount]
         
-        outcome = (salvage_strategy + no_salvage_strategy) / target.shape[0]
+        # Make sure we don't duplicate
+        assert target.shape[0] == salvage_strategy.shape[0] + no_salvage_strategy.shape[0]
+        
+        # Really make sure we don't duplicate
+        a = salvage_strategy.index.tolist()
+        b = no_salvage_strategy.index.tolist()
+        assert len(set(a).intersection(set(b))) == 0
+        
+        outcome = (salvage_strategy.sum() + no_salvage_strategy.sum()) / target.shape[0]
 
         return outcome
         
@@ -57,9 +69,9 @@ class Classifier():
         no_salvage = no_salvage.fillna(no_salvage.mean())
 
         target = salvage.copy()
-        target["DR5"] -= no_salvage["DR5"]
+        target[self.discount] -= no_salvage[self.discount]
 
-        target['Voucher'] = (target["DR5"] > 0)
+        target['Voucher'] = (target[self.discount] > 0)
 
         scaler = RobustScaler()
         X = target.drop(['Voucher', 'Treatment', 'NoDR', 'DR5', 'DR1', 'DR3', 'Salvage', 'TimeStep'], axis=1)
@@ -69,8 +81,8 @@ class Classifier():
         
         _, X_test, _, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
         
-        _, _, _, y_no_salvage = train_test_split(X, no_salvage['DR5'], test_size=0.2, random_state=1)
-        _, _, _, y_salvage = train_test_split(X, salvage['DR5'], test_size=0.2, random_state=1)
+        _, _, _, y_no_salvage = train_test_split(X, no_salvage[self.discount], test_size=0.2, random_state=1)
+        _, _, _, y_salvage = train_test_split(X, salvage[self.discount], test_size=0.2, random_state=1)
         
         if management == 'Comm-Ind':
             out = self.comm_ind.predict(X_test)
@@ -90,7 +102,7 @@ class Classifier():
         preds = preds.rename_axis('StandID')
 
         return {
-            'preds':out, 
+            'preds': out, 
             'test': y_test, 
             'optimal_strategy': self._get_strategy(data, y_test, management), 
             'no_salvage_strategy': np.mean(y_no_salvage), 

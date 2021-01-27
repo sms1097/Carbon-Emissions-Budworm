@@ -12,7 +12,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import LinearSVC
 
 
-data = load_data_class('HighGrade')
+data = load_data_class('HighGrade', 'NoDR')
 dummies = pd.get_dummies(data['Treatment'])
 
 scaler = RobustScaler()
@@ -70,16 +70,13 @@ f = RandomForestClassifier(
 rf = RandomizedSearchCV(f, param_grid, n_jobs=3)
 
 
-with open('model/high_grade_classifier', 'wb') as handle:
-    pickle.dump(rf, handle, protocol=pickle.HIGHEST_PROTOCOL)
-
 rf.fit(X_train, y_train)
 preds = rf.predict(X_test)
 train_preds = rf.predict(X_train)
 
 model_report(preds, train_preds, y_test, y_train)
 
-with open('model/high_grade_classifier', 'wb') as handle:
+with open('model/NoDR/high_grade_classifier', 'wb') as handle:
     pickle.dump(rf, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 print(rf.best_params_)

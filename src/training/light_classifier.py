@@ -12,7 +12,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import LinearSVC
 
 
-data = load_data_class('Light')
+data = load_data_class('Light', 'NoDR')
 dummies = pd.get_dummies(data['Treatment'])
 
 scaler = RobustScaler()
@@ -75,7 +75,5 @@ train_preds = rf.predict(X_train)
 
 model_report(preds, train_preds, y_test, y_train)
 
-with open('model/light_classifier', 'wb') as handle:
+with open('model/NoDR/light_classifier', 'wb') as handle:
     pickle.dump(rf, handle, protocol=pickle.HIGHEST_PROTOCOL)
-
-print(rf.best_params_)

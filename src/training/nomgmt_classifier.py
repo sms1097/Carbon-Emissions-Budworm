@@ -9,7 +9,7 @@ from sklearn.model_selection import train_test_split, RandomizedSearchCV
 from sklearn.ensemble import  RandomForestClassifier
 
 
-data = load_data_class('NoMgmt')
+data = load_data_class('NoMgmt', 'NoDR')
 
 scaler = RobustScaler()
 
@@ -55,7 +55,7 @@ param_grid = {'n_estimators': n_estimators,
 # 'bootstrap': True}
 ## RESULTS
 
-rf = RandomForestClassifier(
+f = RandomForestClassifier(
     n_estimators=8484, 
     min_samples_split=5, 
     min_samples_leaf=2, 
@@ -64,7 +64,7 @@ rf = RandomForestClassifier(
     bootstrap=True
 )
 
-# f = RandomizedSearchCV(f, param_grid, n_jobs=3)
+rf = RandomizedSearchCV(f, param_grid, n_jobs=3)
 
 rf.fit(X_train, y_train)
 preds = rf.predict(X_test)
@@ -72,7 +72,7 @@ train_preds = rf.predict(X_train)
 
 model_report(preds, train_preds, y_test, y_train)
 
-# with open('model/nomgmt_classifier', 'wb') as handle:
-#     pickle.dump(rf, handle, protocol=pickle.HIGHEST_PROTOCOL)
+with open('model/NoDR/nomgmt_classifier', 'wb') as handle:
+    pickle.dump(rf, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-print(rf.feature_importances_)
+# print(rf.feature_importances_)

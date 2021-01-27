@@ -13,7 +13,7 @@ from sklearn.svm import LinearSVC
 
 from imodels import SkopeRulesClassifier
 
-data = load_data_class('Heavy', 'DR5')
+data = load_data_class('Heavy', 'NoDR')
 dummies = pd.get_dummies(data['Treatment'])
 
 scaler = RobustScaler()
@@ -48,17 +48,6 @@ param_grid = {'n_estimators': n_estimators,
                'bootstrap': bootstrap
 }
 
-# Accuracy: 0.777232746955345
-# Precision: 0.801490514905149
-# Recall: 0.7639651275427833
-# Train Accuracy: 0.8425393334461174
-# {'n_estimators': 1090, 
-# 'min_samples_split': 10, 
-# 'min_samples_leaf': 2, 
-# 'max_features': 3, 
-# 'max_depth': 90, 
-# 'bootstrap': True}
-
 f = RandomForestClassifier()
 
 rf = RandomizedSearchCV(f, param_grid, n_jobs=3)
@@ -69,5 +58,5 @@ train_preds = rf.predict(X_train)
 
 model_report(preds, train_preds, y_test, y_train)
 
-with open('model/heavy_classifier', 'wb') as handle:
+with open('model/NoDR/heavy_classifier', 'wb') as handle:
     pickle.dump(rf, handle, protocol=pickle.HIGHEST_PROTOCOL)
