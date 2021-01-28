@@ -56,12 +56,10 @@ def load_data_reg(management, discount="DR5"):
 
     return data
 
-def model_report(test_preds, train_preds, y_test, y_train):
+def model_report(management, discount, test_preds, train_preds, y_test, y_train):
+    print('Management: {}'.format(management))
+    print('Discount: {}'.format(discount))
     print('Accuracy: {}'.format(accuracy_score(y_test, test_preds)))
     print('Precision: {}'.format(precision_score(y_test, test_preds)))
     print('Recall: {}'.format(recall_score(y_test, test_preds)))
     print('Train Accuracy: {}'.format(accuracy_score(y_train, train_preds)))
-
-def reg_model_report(test_preds, train_preds, y_test, y_train):
-    print('RMSE Test: {}'.format(mean_squared_error(y_test, test_preds, squared=False)))
-    print('RMSE Train: {}'.format(mean_squared_error(y_train, train_preds, squared=False)))
