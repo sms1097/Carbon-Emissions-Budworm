@@ -4,10 +4,9 @@ import pickle
 from preprocess import load_data_class, model_report
 
 from sklearn.preprocessing import RobustScaler
-from sklearn.model_selection import train_test_split, RandomizedSearchCV
+from sklearn.model_selection import train_test_split, GridSearchCV 
  
 from sklearn.ensemble import  RandomForestClassifier
-
 
 
 def train_model(management, discount):
@@ -23,32 +22,30 @@ def train_model(management, discount):
 
     # Random Search
     # Number of trees in random forest
-    n_estimators = [int(x) for x in np.linspace(start = 5000, stop = 10000, num = 100)]
+    # n_estimators = [int(x) for x in np.linspace(start = 5000, stop = 10000, num = 100)]
+    n_estimators = [6000]
     # Number of features to consider at every split
-    max_features = [int(x) for x in np.linspace(start=3, stop=X.shape[1], num=1)]
+    # max_features = [int(x) for x in np.linspace(start=3, stop=X.shape[1], num=1)]
+    # max_features = [3, 4, ]
     # Maximum number of levels in tree
-    max_depth = [int(x) for x in np.linspace(10, 110, num = 11)]
-    max_depth.append(None)
+    # max_depth = [int(x) for x in np.linspace(10, 110, num = 11)]
+    # max_depth.append(None)
     # Minimum number of samples required to split a node
-    min_samples_split = [2, 5, 10]
+    # min_samples_split = [2, 5, 10]
     # Minimum number of samples required at each leaf node
     min_samples_leaf = [1, 2, 4]
     # Method of selecting samples for training each tree
-    bootstrap = [True, False]
+    bootstrap = [True]
 
     # Create the random grid
     param_grid = {
         'n_estimators': n_estimators,
-        'max_features': max_features,
-        'max_depth': max_depth,
-        'min_samples_split': min_samples_split,
-        'min_samples_leaf': min_samples_leaf,
-        'bootstrap': bootstrap,
-        'class_weight': ['balanced', None]
+        # 'min_samples_leaf': min_samples_leaf,
+        'class_weight': [{0:0.1, 1:0.9}]
     }
 
     f = RandomForestClassifier()
-    rf = RandomizedSearchCV(f, param_grid, n_jobs=3)
+    rf = GridSearchCV(f, param_grid, n_jobs=3)
 
     rf.fit(X_train, y_train)
     preds = rf.predict(X_test)

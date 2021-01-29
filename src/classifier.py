@@ -6,17 +6,15 @@ from sklearn.preprocessing import RobustScaler
 
 
 class Classifier():
-    def __init__(self, discount_rate):
-        base = 'model/' + discount_rate + '/'
-        self.comm_ind = pickle.load(open(base + 'comm_ind_classifier', 'rb'))
-        self.heavy = pickle.load(open(base + 'heavy_classifier', 'rb'))
-        self.high_grade = pickle.load(open(base + 'heavy_classifier', 'rb'))
-        self.light = pickle.load(open(base + 'light_classifier', 'rb'))
-        self.moderate = pickle.load(open(base + 'moderate_classifier', 'rb'))
-        self.no_mgmt = pickle.load(open(base + 'nomgmt_classifier', 'rb'))
+    def __init__(self, model, discount_rate):
+        base = 'model/' + model + '/' + discount_rate + '/'
+        self.comm_ind = pickle.load(open(base + 'Comm-Ind', 'rb'))
+        self.heavy = pickle.load(open(base + 'Heavy', 'rb'))
+        self.high_grade = pickle.load(open(base + 'HighGrade', 'rb'))
+        self.light = pickle.load(open(base + 'Light', 'rb'))
+        self.moderate = pickle.load(open(base + 'Moderate', 'rb'))
+        self.no_mgmt = pickle.load(open(base + 'NoMgmt', 'rb'))
         self.discount = discount_rate
-
-
         
     def _get_strategy(self, data, target, management):
         ## Get Optimal Strategy

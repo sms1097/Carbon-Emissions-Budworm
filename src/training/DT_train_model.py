@@ -1,4 +1,3 @@
-from numpy.lib.nanfunctions import _nan_mask
 import pandas as pd
 import numpy as np
 import pickle
@@ -8,6 +7,7 @@ from preprocess import load_data_class, model_report
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.preprocessing import RobustScaler
 from sklearn.model_selection import train_test_split, GridSearchCV 
+
 
 def train_model(management, discount):
     data = load_data_class(management, discount)
@@ -23,7 +23,8 @@ def train_model(management, discount):
         'class_weight': ['balanced', None],
         'min_samples_leaf': [2, 3, 4],
         'min_samples_leaf': [1, 2, 3],
-        'max_features': ['auto', None]
+        'max_features': ['auto', None],
+        'class_weight': [{0:0.1, 1:0.9}]
     }
 
     tree = DecisionTreeClassifier()
