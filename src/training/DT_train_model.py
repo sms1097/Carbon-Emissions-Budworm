@@ -23,8 +23,9 @@ def train_model(management, discount):
         'class_weight': ['balanced', None],
         'min_samples_leaf': [2, 3, 4],
         'min_samples_leaf': [1, 2, 3],
-        'max_features': ['auto', None],
-        'class_weight': [{0:0.1, 1:0.9}]
+        'max_features': ['auto', None], 
+        'max_depth': [3], 
+        'class_weight': [{0:0.8, 1:0.2}]
     }
 
     tree = DecisionTreeClassifier()
