@@ -12,12 +12,9 @@ from sklearn.model_selection import train_test_split, GridSearchCV
 def train_model(management, discount):
     data = load_data_class(management, discount)
 
-    scaler = RobustScaler()
-
-    X = data.drop(['Voucher', 'Treatment', 'Salvage', 'TimeStep'], axis=1)
-    X = scaler.fit_transform(X)
-
+    X = data.drop(['Voucher', 'Treatment', 'Salvage', 'TimeStep', discount], axis=1)
     y = data['Voucher']
+
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
     param_grid = {
         'class_weight': ['balanced', None],
@@ -43,6 +40,7 @@ def train_model(management, discount):
 if __name__ == "__main__": 
     mgmts = ['Comm-Ind', 'Heavy', 'HighGrade', 'Light', 'NoMgmt', 'Moderate']
     discounts = ['NoDR', 'DR1', 'DR3', 'DR5']
+    sampling = [None, ]
     for mgmt in mgmts:
         for discount in discounts:
             train_model(mgmt, discount)

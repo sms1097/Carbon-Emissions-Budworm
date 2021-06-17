@@ -12,10 +12,7 @@ from sklearn.ensemble import  RandomForestClassifier
 def train_model(management, discount):
     data = load_data_class(management, discount)
 
-    scaler = RobustScaler()
-
-    X = data.drop(['Voucher', 'Treatment', 'Salvage', 'TimeStep'], axis=1)
-    X = scaler.fit_transform(X)
+    X = data.drop(['Voucher', 'Treatment', 'Salvage', 'TimeStep', discount], axis=1)
 
     y = data['Voucher']
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
@@ -23,7 +20,7 @@ def train_model(management, discount):
     # Random Search
     # Number of trees in random forest
     # n_estimators = [int(x) for x in np.linspace(start = 5000, stop = 10000, num = 100)]
-    n_estimators = [6000]
+    n_estimators = [2000]
     # Number of features to consider at every split
     # max_features = [int(x) for x in np.linspace(start=3, stop=X.shape[1], num=1)]
     # max_features = [3, 4, ]

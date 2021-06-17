@@ -1,4 +1,3 @@
-
 import pandas as pd
 import numpy as np
 import pickle
@@ -13,10 +12,10 @@ from sklearn.model_selection import train_test_split, GridSearchCV
 def train_model(management, discount):
     data = load_data_class(management, discount)
 
-    scaler = RobustScaler()
+    # scaler = RobustScaler()
 
-    X = data.drop(['Voucher', 'Treatment', 'Salvage', 'TimeStep'], axis=1)
-    X = scaler.fit_transform(X)
+    X = data.drop(['Voucher', 'Treatment', 'Salvage', 'TimeStep', discount], axis=1)
+    # X = scaler.fit_transform(X)
 
     y = data['Voucher']
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)

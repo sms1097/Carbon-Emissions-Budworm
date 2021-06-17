@@ -1,0 +1,8 @@
+.ipynb_checkpoints/
+.vscode/
+src/__pycache__/
+model/
+data/
+results.ipynb
+Untitled.ipynb
+src/training/__pycache__/

@@ -11,7 +11,7 @@ def base_load(management, discount, spatial=False):
     if discount not in rates:
         raise ValueError("Invalid Discount Rate!")
 
-    data = pd.read_csv("data/Classifier_Inputs.csv")
+    data = pd.read_csv("data/Updated_Basel_Area.csv")
     
     if spatial:
         data = pd.read_csv('data/Classifier_Inputs_Spatial.csv')
@@ -39,7 +39,7 @@ def base_load(management, discount, spatial=False):
 
     return data
 
-def load_data_class(management, discount="DR5", spatial=False):
+def load_data_class(management=None, discount="DR5", spatial=False):
     rates = ["NoDR", "DR1", "DR3", "DR5"]
 
     data = base_load(management, discount, spatial)

@@ -1,5 +1,5 @@
 import pandas as pd
-from classifier import Classifier
+from src.classifier import Classifier
 
 
 def F(mng, base):
@@ -23,10 +23,10 @@ def G(mng, base):
 
     return g
 
+
 def improvement(mng, base):
     strict = min(mng['salvage_strategy'], mng['no_salvage_strategy']) - mng['optimal_strategy']
     model = mng['model_strategy'] - mng['optimal_strategy']
-
 
     improv = base.copy()    
     improv[-2] = 'times'
@@ -34,11 +34,13 @@ def improvement(mng, base):
 
     return improv
 
+
 def salvage(mng, base):
     salvage = base.copy()
     salvage[-2] = 'salvage'
     salvage[-1] = mng['salvage_strategy']
     return salvage
+
 
 def no_salvage(mng, base):
     no_salvage = base.copy()
@@ -46,18 +48,27 @@ def no_salvage(mng, base):
     no_salvage[-1] = mng['no_salvage_strategy']
     return no_salvage
 
+
 def optimal(mng, base):
     optimal = base.copy()
     optimal[-2] = 'optimal'
     optimal[-1] = mng['optimal_strategy']
     return optimal
 
+
+def model_strategy(mng, base):
+    strat = base.copy()
+    strat[-2] = 'model_strategy'
+    strat[-1] = mng['model_strategy']
+    return strat
+
+
 if __name__ == "__main__":
-    data = pd.read_csv('data/Classifier_Inputs.csv')
+    data = pd.read_csv('data/Updated_Basel_Area.csv')
     data = data.set_index('StandID')
 
     discounts = ['NoDR', 'DR1', 'DR3', 'DR5']
-    models = ['DT', 'LogReg', 'RF']
+    models = ['DT', 'SLIPPER', 'LogReg', 'RF']
     managements = ['Heavy', 'NoMgmt', 'Moderate', 'Light', 'Comm-Ind', 'HighGrade']
 
     cols = ['Model', 'Managment', 'Discount', 'Metric', 'Result']
@@ -77,11 +88,12 @@ if __name__ == "__main__":
                         improvement(context, base),
                         salvage(context, base),
                         no_salvage(context, base),
-                        optimal(context, base)
+                        optimal(context, base),
+                        model_strategy(context, base)
                     ],
                     columns=cols
                 )
 
                 df = df.append(temp)
 
-    df.to_csv('data/Model_Outputs.csv')
+    df.to_csv('data/Model_Outputs.csv', index=False)

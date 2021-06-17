@@ -15,7 +15,7 @@ class Classifier():
         self.moderate = pickle.load(open(base + 'Moderate', 'rb'))
         self.no_mgmt = pickle.load(open(base + 'NoMgmt', 'rb'))
         self.discount = discount_rate
-        
+
     def _get_strategy(self, data, target, management):
         ## Get Optimal Strategy
         strategy = target.rename('strategy')
@@ -36,7 +36,7 @@ class Classifier():
             (no_salvage['Treatment'] == management)
         ]
         no_salvage_strategy = no_salvage_strategy[self.discount]
-        
+
         # Make sure we don't duplicate
         assert target.shape[0] == salvage_strategy.shape[0] + no_salvage_strategy.shape[0]
         
