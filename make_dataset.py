@@ -3,12 +3,12 @@ from src.classifier import Classifier
 
 
 def F(mng, base):
-    num = 1 - (mng['model_strategy'] - mng['optimal_strategy']) 
+    num = (mng['model_strategy'] - mng['optimal_strategy']) 
     dom = mng['salvage_strategy'] - mng['optimal_strategy'] 
 
     f = base.copy()
     f[-2] = 'F'
-    f[-1] = num / dom
+    f[-1] = 1 - num / dom
 
     return f
 
