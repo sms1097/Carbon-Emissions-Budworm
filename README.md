@@ -1,6 +1,12 @@
 # Spruce Budworm Carbon Emissions
-This is the results for an analysis of when salvaging trees provides better net carbon emissions in a 40 year time frame. All of the models trained are available through docker. To run use the following:
 
+### Reporducing Results
+We compare results from several models by running `make_dataset.py`. This loads serialized models from a `model` directory and uses them to make predictions on data not seen in training.
+
+
+
+### Docker Instructions
+To run use the following:
 ``` 
 docker pull sms1097/budworm
 docker container run -p 8888:8888 budworm
